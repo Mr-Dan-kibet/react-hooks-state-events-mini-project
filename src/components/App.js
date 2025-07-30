@@ -1,44 +1,49 @@
-// App.js
 import React, { useState } from "react";
-import TaskList from "./TaskList";
 import CategoryFilter from "./CategoryFilter";
 import NewTaskForm from "./NewTaskForm";
-import { TASKS, CATEGORIES } from "../data";
+import TaskList from "./TaskList";
+
+import { CATEGORIES, TASKS } from "../data";
+console.log("Here's the data you're working with");
+console.log({ CATEGORIES, TASKS });
 
 function App() {
   const [tasks, setTasks] = useState(TASKS);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Filter tasks based on selected category
-  const filteredTasks =
-    selectedCategory === "All"
-      ? tasks
-      : tasks.filter((task) => task.category === selectedCategory);
+  function handleCategoryChange(category) {
+    setSelectedCategory(category);
+  }
 
-  // Add a new task
+  function handleDeleteTask(taskText) {
+    const updatedTasks = tasks.filter((task) => task.text !== taskText);
+    setTasks(updatedTasks);
+  }
+
   function handleAddTask(newTask) {
     setTasks([...tasks, newTask]);
   }
 
-  // Delete a task
-  function handleDeleteTask(textToRemove) {
-    const updatedTasks = tasks.filter((task) => task.text !== textToRemove);
-    setTasks(updatedTasks);
-  }
+  const filteredTasks = tasks.filter((task) =>
+    selectedCategory === "All" ? true : task.category === selectedCategory
+  );
 
   return (
     <div className="App">
       <h2>My tasks</h2>
-
       <CategoryFilter
         categories={CATEGORIES}
         selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
+        onCategoryChange={handleCategoryChange}
       />
-
-      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={handleAddTask} />
-
-      <TaskList tasks={filteredTasks} onDeleteTask={handleDeleteTask} />
+      <NewTaskForm
+        categories={CATEGORIES}
+        onTaskFormSubmit={handleAddTask}
+      />
+      <TaskList
+        tasks={filteredTasks}
+        onDeleteTask={handleDeleteTask}
+      />
     </div>
   );
 }
